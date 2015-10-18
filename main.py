@@ -36,14 +36,16 @@ class cellStatus:
     OPLAYER3=8
     
     def getPlayer(self, iIntPlayer):
-        if iIntPlayer == 1:
+        if iIntPlayer == 0:
+            return cellStatus.OPLAYER0
+        elif iIntPlayer == 1:
             return cellStatus.OPLAYER1
         elif iIntPlayer == 2:
             return cellStatus.OPLAYER2
         elif iIntPlayer == 3:
             return cellStatus.OPLAYER3
-        elif iIntPlayer == 4:
-            return cellStatus.OPLAYER4
+        else:
+            print >> sys.stderr,"trying to access plauer ",iIntPlayer
 
 #Possible actions for a player
 class actions:
@@ -156,11 +158,8 @@ class game:
     def applyRefresh(self,iPreviousAction=None):
         if iPreviousAction:
             self.previousAction = iPreviousAction
-        otherPlayerCounter = 0
         for position in self.playerPosition:
-            
             self.board.setContent(position, cellStatus().getPlayer(position[2]))
-            otherPlayerCounter += 1
         del self.playerPosition[:]
         self.board.setContent(self.myPosition, cellStatus.LIGHT)
 
@@ -288,14 +287,16 @@ class gameProxy:
         if self.getPatchedContent(normalizePosition(self.mState.myPosition, actions.UP)) == cellStatus.EMPTY:
             aList.append(move(actions.UP))
 
-        if self.getPatchedContent(normalizePosition(self.mState.myPosition, actions.DOWN)) == cellStatus.EMPTY:
-            aList.append(move(actions.DOWN))
-
         if self.getPatchedContent(normalizePosition(self.mState.myPosition, actions.RIGHT)) == cellStatus.EMPTY:
             aList.append(move(actions.RIGHT))
 
         if self.getPatchedContent(normalizePosition(self.mState.myPosition, actions.LEFT)) == cellStatus.EMPTY:
             aList.append(move(actions.LEFT))
+            
+        if self.getPatchedContent(normalizePosition(self.mState.myPosition, actions.DOWN)) == cellStatus.EMPTY:
+            aList.append(move(actions.DOWN))
+
+            
 
         cprint("Possible moves :"+str([getLabel(m.value) for m in aList]))
         return aList
@@ -351,7 +352,7 @@ while 1:
     myGame.board.printObject()
     aGameProxy = gameProxy(myGame)
     aGameProxy.setStateFromGame(myGame)
-    retour = miniMax.miniMax(aGameProxy,10000)
+    retour = miniMax.miniMax(aGameProxy,20000)
         
     # Write an action using print
     # To debug: print >> sys.stderr, "Debug messages..."
