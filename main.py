@@ -214,6 +214,7 @@ class miniMax:
             #Apply risk factor on temp
             if iClass.isRisky(iState,m):
                 temp = round(temp / 2.0)
+                print >> sys.stderr,"isRisky",getLabel(m.value)
             if temp > valueBestMove:
                 valueBestMove=temp
                 bestMove=m
@@ -225,11 +226,19 @@ class miniMax:
         numPlayers = 0
         if iState.getPatchedContent(normalizePosition(newPos, actions.UP)) == cellStatus.PLAYER:
             numPlayers+=1
+        if iState.getPatchedContent(normalizePosition(normalizePosition(newPos, actions.UP),actions.LEFT)) == cellStatus.PLAYER:
+            numPlayers+=1
         if iState.getPatchedContent(normalizePosition(newPos, actions.DOWN)) == cellStatus.PLAYER:
+            numPlayers+=1
+        if iState.getPatchedContent(normalizePosition(normalizePosition(newPos, actions.DOWN),actions.RIGHT)) == cellStatus.PLAYER:
             numPlayers+=1
         if iState.getPatchedContent(normalizePosition(newPos, actions.RIGHT)) == cellStatus.PLAYER:
             numPlayers+=1
+        if iState.getPatchedContent(normalizePosition(normalizePosition(newPos, actions.RIGHT),actions.UP)) == cellStatus.PLAYER:
+            numPlayers+=1
         if iState.getPatchedContent(normalizePosition(newPos, actions.LEFT)) == cellStatus.PLAYER:
+            numPlayers+=1
+        if iState.getPatchedContent(normalizePosition(normalizePosition(newPos, actions.LEFT),actions.DOWN)) == cellStatus.PLAYER:
             numPlayers+=1
         return numPlayers > 2
         
@@ -324,7 +333,6 @@ while 1:
     print >> sys.stderr, "player_count, my_player: ", player_count, my_player
                 
     for i in xrange(player_count):
-        print >> sys.stderr, "plqyer nu,ber: ", i
          # x0: starting X coordinate of lightcycle (or -1)
          # y0: starting Y coordinate of lightcycle (or -1)
          # x1: starting X coordinate of lightcycle (can be the same as X0 if you play before this player)
@@ -343,7 +351,7 @@ while 1:
     myGame.board.printObject()
     aGameProxy = gameProxy(myGame)
     aGameProxy.setStateFromGame(myGame)
-    retour = miniMax.miniMax(aGameProxy,600)
+    retour = miniMax.miniMax(aGameProxy,10000)
         
     # Write an action using print
     # To debug: print >> sys.stderr, "Debug messages..."
